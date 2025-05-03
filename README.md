@@ -14,11 +14,15 @@
 
 ## 📸 Capturas de Pantalla
 
+<div align="center">
+
 ### Panel Principal
-![Panel Principal](./imagen/panel_principal.png)
+<img src="./imagen/panel_principal.png" alt="Panel Principal" width="600"/>
 
 ### Panel de Administración
-![Panel de Administración](./imagen/panel_admin.png)
+<img src="./imagen/panel_admin.png" alt="Panel de Administración" width="600"/>
+
+</div>
 
 ## ✨ Características
 
