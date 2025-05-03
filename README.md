@@ -281,6 +281,10 @@ La aplicación incluye gráficos interactivos para visualizar:
 - 📉 Resumen financiero con totales
 - 💵 Balance de gastos e ingresos
 
+## 🔒 Licencia
+
+Este proyecto está licenciado bajo la [Licencia MIT](LICENSE) - consulta el archivo LICENSE para más detalles.
+
 ## 👨‍💻 Autor
 
 Desarrollado con ❤️ por Scorpio
