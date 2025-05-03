@@ -24,6 +24,24 @@
 
 </div>
 
+## 💻 Panel de Administración
+
+El Panel de Administración proporciona herramientas potentes para gestionar la base de datos de la aplicación:
+
+### Funciones Principales
+
+- **🔄 Restaurar Categorías**: Restablece las categorías predeterminadas en caso de que hayan sido eliminadas o modificadas accidentalmente.
+
+- **🗑️ Eliminar Transacciones Antiguas**: Permite eliminar automáticamente todas las transacciones con más de un año de antigüedad, ayudando a mantener la base de datos limpia y eficiente.
+
+- **💾 Optimizar Base de Datos**: Ejecuta comandos de optimización en las tablas de la base de datos para mejorar el rendimiento general de la aplicación.
+
+- **🗑️ Limpiar Base de Datos**: Elimina todos los registros de transacciones mientras preserva las tablas de usuarios y categorías. Esta función es útil para reiniciar la aplicación manteniendo la configuración básica.
+
+### Seguridad
+
+El acceso al Panel de Administración está protegido por autenticación, asegurando que solo los usuarios autorizados puedan realizar estas operaciones críticas.
+
 ## ✨ Características
 
 - 💰 **Gestión de Gastos**: Registra y gestiona gastos de comunidad para casa y garaje
