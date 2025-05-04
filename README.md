@@ -16,11 +16,11 @@
 
 <div align="center">
 
-### Panel Principal
-<img src="./imagen/panel_principal.png" alt="Panel Principal" width="300"/>
 
-### Panel de Administración
-<img src="./imagen/panel_admin.png" alt="Panel de Administración" width="300"/>
+<img src="./imagen/panel_principal.png" alt="Panel Principal" width="300"/>  <img src="./imagen/panel_admin.png" alt="Panel de Administración" width="300"/>
+
+
+
 
 </div>
 
