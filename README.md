@@ -122,9 +122,11 @@ La aplicación incluye un lanzador que facilita su ejecución en diferentes modo
 
 3. Elige uno de los modos de ejecución:
 
-   - **Modo XAMPP**: Abre la aplicación en `http://localhost/duplicados/gastos/`. Requiere que los servicios Apache y MySQL estén en ejecución.
+   - **Modo XAMPP**: Abre la aplicación en la ruta donde hayas colocado el proyecto (por ejemplo, `http://localhost/[carpeta-del-proyecto]/`). Requiere que los servicios Apache y MySQL estén en ejecución.
    
    - **Modo Desarrollo**: Inicia automáticamente el servidor de desarrollo con Vite y abre la aplicación en el puerto asignado. No depende de XAMPP para el desarrollo.
+
+> **Nota**: El ejecutable detecta automáticamente la carpeta donde está instalado el proyecto y construye las URLs correctamente.
 
 ### Desarrollo Manual
 
@@ -137,7 +139,7 @@ npm run dev
 2. Abre tu navegador y ve a la URL mostrada en la consola (normalmente algo como):
 
 ```
-http://localhost:5173/duplicados/gastos/
+http://localhost:5173/
 ```
 
 > **Nota**: El puerto puede variar en cada ejecución. Observa la consola para ver la URL exacta.
@@ -155,8 +157,43 @@ npm run build
    - Copia la carpeta `api` completa al mismo nivel que los archivos de la carpeta `dist`
    - Asegúrate de que el servidor web tenga permisos de escritura en la carpeta `api`
 
-3. Configura la URL base en producción:
-   - Si estás desplegando en una subcarpeta, edita el archivo `vite.config.ts` y ajusta la propiedad `base` antes de construir:
+## 🔄 Cambiar la carpeta o ruta del proyecto
+
+Esta aplicación está diseñada para funcionar correctamente incluso si cambias la ubicación del proyecto. Sin embargo, hay algunos pasos importantes que debes seguir:
+
+### 1. Mover los archivos del proyecto
+
+1. Copia toda la carpeta del proyecto a la nueva ubicación deseada dentro de la carpeta `htdocs` de XAMPP.
+
+### 2. Configurar el acceso a la API
+
+Para que la aplicación pueda acceder a la API correctamente, necesitas crear una carpeta `api` en la raíz del servidor web que redirija a la API de tu proyecto:
+
+1. Crea una carpeta llamada `api` en la raíz del servidor web (`D:\xampp\htdocs\api`).
+
+2. Crea un archivo `index.php` dentro de esta carpeta con el siguiente contenido:
+
+```php
+<?php
+// Este archivo redirige todas las solicitudes de /api a /[tu-carpeta]/api
+
+// Obtener la ruta solicitada
+$request_uri = $_SERVER['REQUEST_URI'];
+
+// Quitar '/api' del inicio de la ruta
+$new_path = preg_replace('/^\/api/', '/[nombre-de-tu-carpeta]/api', $request_uri);
+
+// Redirigir a la nueva ruta
+header("Location: $new_path");
+exit;
+?>
+```
+
+> **Importante**: Reemplaza `[nombre-de-tu-carpeta]` con el nombre real de la carpeta donde has colocado el proyecto.
+
+### 3. Ejecutar la aplicación
+
+Una vez configurado, simplemente ejecuta el archivo `GestionGastos.exe` o `GestionGastos.bat` desde la nueva ubicación. El ejecutable detectará automáticamente la carpeta donde está instalado y construirá las URLs correctamente.
      ```typescript
      export default defineConfig({
        // ...
@@ -196,10 +233,31 @@ gastos/
 │   ├── models/               # Modelos de datos
 │   │   ├── Category.php       # Modelo para categorías
 │   │   └── Expense.php        # Modelo para gastos
-│   ├── categories.php        # API para categorías
-│   ├── config.php            # Configuración global
-│   ├── expenses.php          # API para gastos
-│   └── index.php             # Punto de entrada de la API
+│   ├── categories.php        # API de categorías
+│   ├── config.php            # Configuración general
+│   ├── expenses.php          # API de gastos
+│   ├── index.php             # Punto de entrada de la API
+│   └── test.php              # Archivo de prueba para verificar la API
+├── assets/                   # Archivos compilados (CSS, JS)
+├── dist/                     # Archivos de distribución compilados
+├── imagen/                   # Imágenes y recursos gráficos
+├── src/                      # Código fuente de React
+│   ├── components/           # Componentes de React
+│   ├── context/              # Contextos de React (AuthContext, etc.)
+│   ├── hooks/                # Hooks personalizados
+│   ├── pages/                # Páginas de la aplicación
+│   ├── types/                # Definiciones de tipos TypeScript
+│   ├── utils/                # Utilidades y funciones auxiliares
+│   ├── App.tsx               # Componente principal de la aplicación
+│   └── main.tsx              # Punto de entrada de React
+├── GestionGastos.bat        # Script de inicio rápido
+├── GestionGastos.exe        # Ejecutable para iniciar la aplicación
+├── index.html              # Archivo HTML principal
+├── index.php               # Punto de entrada PHP para el servidor
+├── launcher.ps1            # Script PowerShell para iniciar la aplicación
+├── package.json            # Dependencias y scripts npm
+├── tsconfig.json           # Configuración de TypeScript
+└── vite.config.ts          # Configuración de Vite
 ├── database/                 # Esquemas de base de datos
 │   └── schema.sql            # Esquema SQL de la base de datos
 ├── dist/                     # Archivos de producción (generados)

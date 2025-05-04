@@ -57,8 +57,8 @@ const AppContent = () => {
           <ol className="list-decimal pl-5 space-y-2">
             <li>Verifica que XAMPP esté en ejecución con Apache y MySQL activos.</li>
             <li>Comprueba que la base de datos <code className="bg-gray-100 px-1">gastos_app</code> existe en phpMyAdmin.</li>
-            <li>Verifica que la ruta de la API es correcta: <code className="bg-gray-100 px-1">http://localhost/duplicados/gastos/api</code></li>
-            <li>Intenta acceder directamente a <a href="http://localhost/duplicados/gastos/api/test.php" target="_blank" className="text-blue-600 underline">http://localhost/duplicados/gastos/api/test.php</a> para verificar que la API es accesible.</li>
+            <li>Verifica que la ruta de la API es correcta: <code className="bg-gray-100 px-1">http://localhost/api</code></li>
+            <li>Intenta acceder directamente a <a href="http://localhost/api/test.php" target="_blank" className="text-blue-600 underline">http://localhost/api/test.php</a> para verificar que la API es accesible.</li>
           </ol>
           <div className="mt-4">
             <p>Si el enlace de prueba no funciona, revisa la ruta de instalación de XAMPP y ajusta la URL base en el archivo:</p>

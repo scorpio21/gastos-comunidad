@@ -5,7 +5,7 @@
   "identifier": "com.gestiongastos.app",
   "build": {
     "frontendDist": "../dist",
-    "devUrl": "http://localhost:5173/duplicados/gastos/",
+    "devUrl": "http://localhost:5173/",
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build"
   },

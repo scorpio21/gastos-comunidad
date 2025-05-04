@@ -8,7 +8,11 @@ Add-Type -AssemblyName System.Drawing
 
 # Configuración de la aplicación
 $appTitle = "Gestión de Gastos"
-$xamppUrl = "http://localhost/duplicados/gastos/"
+# Usar un enfoque simple y robusto para obtener la carpeta actual
+# Esto funcionará tanto para scripts .ps1 como para ejecutables .exe
+$scriptPath = (Get-Location).Path
+$currentFolder = Split-Path -Leaf $scriptPath
+$xamppUrl = "http://localhost/$currentFolder/"
 $devUrl = $null # Se detectará automáticamente
 $xamppControlPath = "D:\xampp\xampp-control.exe"
 $apacheServiceName = "httpd"
@@ -16,7 +20,8 @@ $mysqlServiceName = "mysqld"
 
 # Función para detectar el puerto de desarrollo de Vite
 function Get-ViteDevPort {
-    $projectPath = Split-Path -Parent $PSCommandPath
+    # Usar un enfoque simple y robusto para obtener la ruta del proyecto
+    $projectPath = (Get-Location).Path
     
     # Buscar npm en las ubicaciones comunes
     $npmPaths = @(
@@ -48,14 +53,20 @@ function Get-ViteDevPort {
     Start-Sleep -Seconds 3
     
     $logContent = Get-Content $logPath -ErrorAction SilentlyContinue
-    $urlPattern = "http://localhost:\d+/duplicados/gastos/"
+    # Usar un enfoque simple y robusto para obtener la carpeta actual
+    $scriptPath = (Get-Location).Path
+    $currentFolder = Split-Path -Leaf $scriptPath
+    $urlPattern = "http://localhost:\d+/$currentFolder/"
     $match = $logContent | Select-String -Pattern $urlPattern -AllMatches | ForEach-Object { $_.Matches } | Select-Object -First 1
     
     if ($match) {
         return $match.Value
     } else {
         # URL por defecto si no se puede detectar
-        return "http://localhost:5173/duplicados/gastos/"
+        # Usar un enfoque simple y robusto para obtener la carpeta actual
+        $scriptPath = (Get-Location).Path
+        $currentFolder = Split-Path -Leaf $scriptPath
+        return "http://localhost:5173/$currentFolder/"
     }
 }
 
@@ -127,6 +138,14 @@ function Show-SplashScreen {
     $xamppModeButton.Add_Click({
         Start-Process $xamppUrl
         $form.Close()
+        
+        # Terminar el proceso actual para asegurarse de que no queden ventanas abiertas
+        if ($Host.UI.RawUI.WindowTitle -match "PowerShell") {
+            # Si se está ejecutando como script, no hacer nada adicional
+        } else {
+            # Si se está ejecutando como .exe, salir completamente
+            [Environment]::Exit(0)
+        }
     })
     $form.Controls.Add($xamppModeButton)
 
@@ -160,10 +179,22 @@ function Show-SplashScreen {
             return
         }
         
-        # Intentar primero con el servidor PHP en el puerto 8080
-        $phpUrl = "http://localhost:8080"
+        # Usar la URL dinámica basada en la carpeta actual
+        $scriptPath = (Get-Location).Path
+        $currentFolder = Split-Path -Leaf $scriptPath
+        $phpUrl = "http://localhost/$currentFolder/"
+        
+        # Abrir la URL en el navegador predeterminado y cerrar completamente la ventana
         Start-Process $phpUrl
         $form.Close()
+        
+        # Terminar el proceso actual para asegurarse de que no queden ventanas abiertas
+        if ($Host.UI.RawUI.WindowTitle -match "PowerShell") {
+            # Si se está ejecutando como script, no hacer nada adicional
+        } else {
+            # Si se está ejecutando como .exe, salir completamente
+            [Environment]::Exit(0)
+        }
     })
     $form.Controls.Add($devModeButton)
 

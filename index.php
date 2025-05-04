@@ -7,8 +7,8 @@ if (strpos($_SERVER['REQUEST_URI'], '/api/') === 0) {
     return false;
 }
 
-// Servir el archivo index.html para todas las demás rutas
-$indexFile = __DIR__ . '/index.html';
+// Servir el archivo index.html de la carpeta dist para todas las demás rutas
+$indexFile = __DIR__ . '/dist/index.html';
 
 if (file_exists($indexFile)) {
     echo file_get_contents($indexFile);

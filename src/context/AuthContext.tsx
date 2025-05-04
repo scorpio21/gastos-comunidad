@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Función para verificar la autenticación con el servidor
   const checkAuth = async (authToken: string) => {
     try {
-      const response = await fetch('/duplicados/gastos/api/admin/check-auth.php', {
+      const response = await fetch('/api/admin/check-auth.php', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${authToken}`
@@ -84,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
     
     try {
-      const response = await fetch('/duplicados/gastos/api/admin/login.php', {
+      const response = await fetch('/api/admin/login.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

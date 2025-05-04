@@ -24,7 +24,7 @@ const AdminPanel: React.FC = () => {
     
     try {
       // Primero probemos con el script de prueba para ver si funciona
-      const testResponse = await fetch('/duplicados/gastos/api/admin/test-json.php');
+      const testResponse = await fetch('/api/admin/test-json.php');
       let testText = '';
       
       try {
@@ -41,7 +41,7 @@ const AdminPanel: React.FC = () => {
       }
       
       // Usar el script de limpieza de base de datos
-      const response = await fetch('/duplicados/gastos/api/admin/simple-clear-db.php', {
+      const response = await fetch('/api/admin/simple-clear-db.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ const AdminPanel: React.FC = () => {
     setResult(null);
     
     try {
-      const response = await fetch('/duplicados/gastos/api/admin/delete-old-transactions.php', {
+      const response = await fetch('/api/admin/delete-old-transactions.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ const AdminPanel: React.FC = () => {
     setResult(null);
     
     try {
-      const response = await fetch('/duplicados/gastos/api/admin/optimize-database.php', {
+      const response = await fetch('/api/admin/optimize-database.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,7 +166,7 @@ const AdminPanel: React.FC = () => {
     setResult(null);
     
     try {
-      const response = await fetch('/duplicados/gastos/api/admin/restore-categories.php', {
+      const response = await fetch('/api/admin/restore-categories.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

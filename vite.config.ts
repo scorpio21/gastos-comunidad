@@ -7,7 +7,8 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-  base: '/duplicados/gastos/',
+  // Usar './' para rutas relativas al directorio actual
+  base: './',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -21,10 +22,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/duplicados/gastos/api': {
-        target: 'http://localhost/duplicados/gastos/api',
+      '/gastos/api': {
+        target: 'http://localhost/gastos/api',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/duplicados\/gastos\/api/, '')
+        rewrite: (path) => path.replace(/^\/gastos\/api/, '')
       }
     }
   }
