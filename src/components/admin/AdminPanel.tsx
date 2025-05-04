@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Trash2, RefreshCw, Database, AlertTriangle, Tag } from 'lucide-react';
+import { Trash2, RefreshCw, Tag, Receipt } from 'lucide-react';
 import Button from '../ui/Button';
+import AdminTransactionList from './AdminTransactionList';
 
 // Interfaz para las opciones de administración
 interface AdminOption {
@@ -16,6 +17,7 @@ const AdminPanel: React.FC = () => {
   const [showConfirmation, setShowConfirmation] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [currentSection, setCurrentSection] = useState<string>('main');
 
   // Función para limpiar la base de datos (eliminar todos los registros)
   const clearDatabase = async () => {
@@ -234,90 +236,111 @@ const AdminPanel: React.FC = () => {
   ];
 
   // Renderizar el panel de administración
+  if (currentSection === 'transactions') {
+    return (
+      <div className="max-w-7xl mx-auto p-4">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Administración de Transacciones</h2>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setCurrentSection('main')}
+          >
+            Volver al Panel
+          </Button>
+        </div>
+        <div className="bg-white rounded-lg shadow">
+          <AdminTransactionList />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-          <Database className="mr-2 h-6 w-6 text-gray-700" />
-          Panel de Administración
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Gestiona la base de datos y realiza tareas de mantenimiento. Ten cuidado con las acciones peligrosas.
-        </p>
-      </div>
-
-      {/* Mensaje de resultado */}
+      <h2 className="text-2xl font-bold mb-6">Panel de Administración</h2>
+      
+      {/* Mostrar resultado si existe */}
       {result && (
-        <div className={`mb-6 p-4 rounded-lg ${result.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
-          <p className="font-medium">{result.message}</p>
+        <div
+          className={`p-4 mb-6 rounded-lg ${
+            result.success ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+          }`}
+        >
+          {result.message}
         </div>
       )}
 
-      {/* Lista de opciones */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {adminOptions.map((option) => (
-          <div 
-            key={option.id} 
-            className={`border rounded-lg p-4 hover:shadow-md transition-shadow ${
-              option.dangerous ? 'border-red-200 bg-red-50' : 'border-gray-200 bg-white'
-            }`}
-          >
-            <div className="flex items-start mb-3">
-              {option.icon}
-              <h2 className="text-lg font-semibold ml-2">{option.title}</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Botón de Administración de Transacciones */}
+        <div className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-start mb-4">
+            <div className="flex-shrink-0 mr-3">
+              <Receipt className="h-6 w-6 text-blue-500" />
             </div>
-            <p className="text-gray-600 text-sm mb-4">{option.description}</p>
-            
-            {option.dangerous && showConfirmation !== option.id ? (
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={() => setShowConfirmation(option.id)}
-                disabled={isLoading !== null}
-                className="w-full"
-              >
-                Ejecutar
-              </Button>
-            ) : option.dangerous && showConfirmation === option.id ? (
-              <div className="space-y-2">
-                <p className="text-red-600 text-xs flex items-center">
-                  <AlertTriangle className="h-4 w-4 mr-1" />
-                  ¿Estás seguro? Esta acción no se puede deshacer.
-                </p>
-                <div className="flex space-x-2">
+            <div>
+              <h3 className="text-lg font-semibold mb-1">Administrar Transacciones</h3>
+              <p className="text-gray-600 text-sm">Gestiona todas las transacciones del sistema. Edita, elimina o revisa el historial completo.</p>
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setCurrentSection('transactions')}
+            >
+              Gestionar Transacciones
+            </Button>
+          </div>
+        </div>
+
+        {/* Resto de opciones de administración */}
+        {adminOptions.map((option) => (
+          <div
+            key={option.id}
+            className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-start mb-4">
+              <div className="flex-shrink-0 mr-3">
+                {option.icon}
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-1">{option.title}</h3>
+                <p className="text-gray-600 text-sm">{option.description}</p>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              {showConfirmation === option.id ? (
+                <div className="space-x-2">
                   <Button
                     variant="danger"
                     size="sm"
                     onClick={option.action}
-                    disabled={isLoading !== null}
-                    className="flex-1"
-                    isLoading={isLoading === option.id}
+                    disabled={isLoading === option.id}
                   >
-                    Confirmar
+                    {isLoading === option.id ? 'Procesando...' : 'Confirmar'}
                   </Button>
                   <Button
                     variant="secondary"
                     size="sm"
                     onClick={() => setShowConfirmation(null)}
-                    disabled={isLoading !== null}
-                    className="flex-1"
+                    disabled={isLoading === option.id}
                   >
                     Cancelar
                   </Button>
                 </div>
-              </div>
-            ) : (
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={option.action}
-                disabled={isLoading !== null}
-                isLoading={isLoading === option.id}
-                className="w-full"
-              >
-                Ejecutar
-              </Button>
-            )}
+              ) : (
+                <Button
+                  variant={option.dangerous ? 'danger' : 'primary'}
+                  size="sm"
+                  onClick={() => option.dangerous ? setShowConfirmation(option.id) : option.action()}
+                  disabled={isLoading === option.id}
+                >
+                  {isLoading === option.id ? 'Procesando...' : 'Ejecutar'}
+                </Button>
+              )}
+            </div>
           </div>
         ))}
       </div>

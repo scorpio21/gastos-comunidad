@@ -7,6 +7,7 @@ import Transactions from './views/Transactions';
 import Categories from './views/Categories';
 import Charts from './views/Charts';
 import AdminPanel from './components/admin/AdminPanel';
+import AdminTransactions from './views/AdminTransactions';
 import ExpenseForm from './components/expenses/ExpenseForm';
 import Card, { CardContent } from './components/ui/Card';
 import Loading from './components/ui/Loading';
@@ -38,6 +39,8 @@ const AppContent = () => {
         return <Charts />;
       case 'admin':
         return <AdminPanel />;
+      case 'admin-transactions':
+        return <AdminTransactions />;
       default:
         return <Dashboard />;
     }

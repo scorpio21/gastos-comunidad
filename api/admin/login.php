@@ -43,7 +43,7 @@ try {
     }
     
     // Preparar consulta para buscar el usuario
-    $stmt = $conn->prepare("SELECT id, username, password, name FROM admin_users WHERE username = ?");
+    $stmt = $conn->prepare("SELECT id, username, password, name, role FROM admin_users WHERE username = ?");
     $stmt->execute([$login_user]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
@@ -68,7 +68,8 @@ try {
                 'user' => [
                     'id' => $user['id'],
                     'username' => $user['username'],
-                    'name' => $user['name']
+                    'name' => $user['name'],
+                    'role' => $user['role']
                 ],
                 'token' => $token
             ]);

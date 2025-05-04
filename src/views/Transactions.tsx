@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Filter, X } from 'lucide-react';
-import ExpenseList from '../components/expenses/ExpenseList';
+import TransactionList from '../components/expenses/TransactionList';
 import Card, { CardContent } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -184,7 +184,7 @@ const Transactions: React.FC = () => {
         </Card>
       )}
       
-      <ExpenseList title="Todas las Transacciones" />
+      <TransactionList title="Todas las Transacciones" />
     </div>
   );
 };

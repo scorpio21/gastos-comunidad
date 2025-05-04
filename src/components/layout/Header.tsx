@@ -28,8 +28,10 @@ const Header: React.FC<HeaderProps> = ({ openAddExpense, setCurrentView, current
     { label: 'Gráficos', value: 'charts' },
   ];
   
-  // Separamos el item de administrador para darle un estilo diferente
-  const adminItem = { label: 'Administrador', value: 'admin' };
+  // Item de administrador
+  const adminItems = [
+    { label: 'Panel Admin', value: 'admin' }
+  ];
   
   const handleNavClick = (view: string) => {
     // Si el usuario intenta acceder al panel de administración sin estar autenticado
@@ -68,34 +70,47 @@ const Header: React.FC<HeaderProps> = ({ openAddExpense, setCurrentView, current
               <Wallet className="h-8 w-8 text-teal-600" />
               <span className="ml-2 text-xl font-semibold text-gray-900">GestiónGastos</span>
             </div>
-            <nav className="hidden md:ml-8 md:flex md:space-x-8">
-              {navItems.map((item) => (
-                <button
-                  key={item.value}
-                  className={`px-3 py-2 text-sm font-medium rounded-md ${
-                    currentView === item.value
-                      ? 'text-teal-600 bg-teal-50'
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                  } transition-colors duration-150 ease-in-out`}
-                  onClick={() => handleNavClick(item.value)}
-                >
-                  {item.label}
-                </button>
-              ))}
-              {/* Botón de Administrador con estilo diferente - solo visible si está autenticado */}
+            <nav className="hidden md:ml-8 md:flex items-center">
+              {/* Menú principal */}
+              <div className="flex space-x-4">
+                {navItems.map((item) => (
+                  <button
+                    key={item.value}
+                    className={`px-3 py-2 text-sm font-medium rounded-md min-w-[100px] ${
+                      currentView === item.value
+                        ? 'text-teal-600 bg-teal-50'
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                    } transition-colors duration-150 ease-in-out`}
+                    onClick={() => handleNavClick(item.value)}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Separador vertical cuando hay botones de admin */}
               {isAuthenticated && (
-                <button
-                  key={adminItem.value}
-                  className={`px-3 py-2 text-sm font-medium rounded-md ml-2 ${
-                    currentView === adminItem.value
-                      ? 'text-red-600 bg-red-50'
-                      : 'text-gray-500 hover:text-red-700 hover:bg-red-50'
-                  } transition-colors duration-150 ease-in-out border border-gray-200 flex items-center`}
-                  onClick={() => handleNavClick(adminItem.value)}
-                >
-                  <Shield className="mr-1 h-4 w-4" />
-                  {adminItem.label}
-                </button>
+                <div className="h-6 w-px bg-gray-200 mx-4"></div>
+              )}
+              
+              {/* Botones de Administrador */}
+              {isAuthenticated && (
+                <div className="flex space-x-4">
+                  {adminItems.map(item => (
+                    <button
+                      key={item.value}
+                      className={`px-3 py-2 text-sm font-medium rounded-md min-w-[100px] flex items-center justify-center ${
+                        currentView === item.value
+                          ? 'text-red-600 bg-red-50 border-red-200'
+                          : 'text-gray-500 hover:text-red-700 hover:bg-red-50 border-gray-200'
+                      } transition-colors duration-150 ease-in-out border`}
+                      onClick={() => handleNavClick(item.value)}
+                    >
+                      <Shield className="mr-1 h-4 w-4" />
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
               )}
             </nav>
           </div>
@@ -169,21 +184,22 @@ const Header: React.FC<HeaderProps> = ({ openAddExpense, setCurrentView, current
               </button>
             ))}
             
-            {/* Opción de Administrador en el menú móvil - solo si está autenticado */}
-            {isAuthenticated && (
+            {/* Opciones de Administrador en el menú móvil - solo si está autenticado */}
+            {isAuthenticated && adminItems.map(item => (
               <button
-                key={adminItem.value}
+                key={item.value}
                 className={`block px-4 py-2 text-base font-medium w-full text-left ${
-                  currentView === adminItem.value
+                  currentView === item.value
                     ? 'text-red-600 bg-red-50'
                     : 'text-gray-500 hover:text-red-700 hover:bg-red-50'
                 } border-t border-gray-200 mt-2 pt-2 flex items-center`}
-                onClick={() => handleNavClick(adminItem.value)}
+                onClick={() => handleNavClick(item.value)}
               >
                 <Shield className="mr-2 h-5 w-5" />
-                {adminItem.label}
+                {item.label}
               </button>
-            )}
+            ))}
+            
             
             {/* Botón de inicio/cierre de sesión en el menú móvil */}
             <button

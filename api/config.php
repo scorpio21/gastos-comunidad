@@ -2,8 +2,8 @@
 // Configuración de la base de datos
 $host = "localhost";
 $db_name = "gastos_app";
-$username = "root"; // Cambiado de 'admin' a 'root' (usuario por defecto de XAMPP)
-$password = "";     // Sin contraseña por defecto
+$username = "root";
+$password = "";
 
 // Configuración de CORS para permitir peticiones desde la aplicación React
 header("Access-Control-Allow-Origin: *");
@@ -12,8 +12,25 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-// Mostrar todos los errores para facilitar la depuración
-ini_set('display_errors', 1);
+// Configuración de errores para asegurar que siempre devolvamos JSON
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+error_reporting(E_ALL);
+
+// Función para manejar errores y devolverlos como JSON
+function handleError($errno, $errstr, $errfile, $errline) {
+    http_response_code(500);
+    echo json_encode([
+        'error' => true,
+        'message' => $errstr,
+        'file' => $errfile,
+        'line' => $errline
+    ]);
+    exit;
+}
+
+// Establecer el manejador de errores personalizado
+set_error_handler('handleError');
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 

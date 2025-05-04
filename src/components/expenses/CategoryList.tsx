@@ -1,15 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Edit, Trash2, Plus } from 'lucide-react';
 import Card, { CardContent, CardHeader } from '../ui/Card';
 import Button from '../ui/Button';
 import { useExpense } from '../../context/ExpenseContext';
+import { useAuth } from '../../context/AuthContext';
 import { Category } from '../../types';
 import CategoryForm from './CategoryForm';
 
 const CategoryList: React.FC = () => {
   const { categories, deleteCategory } = useExpense();
+  const { isAuthenticated } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  // Verificar si el usuario es administrador
+  useEffect(() => {
+    try {
+      const storedUserStr = localStorage.getItem('authUser');
+      if (isAuthenticated && storedUserStr) {
+        const user = JSON.parse(storedUserStr);
+        setIsAdmin(user && (user.role === 'admin' || user.isAdmin === true));
+      } else {
+        setIsAdmin(false);
+      }
+    } catch (error) {
+      console.error('Error al verificar usuario:', error);
+      setIsAdmin(false);
+    }
+  }, [isAuthenticated]);
   
   const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this category?')) {
@@ -50,14 +69,16 @@ const CategoryList: React.FC = () => {
     <Card>
       <CardHeader className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-800">Categorías</h2>
-        <Button
-          variant="primary"
-          size="sm"
-          icon={<Plus size={16} />}
-          onClick={handleAddNew}
-        >
-          Añadir Categoría
-        </Button>
+        {isAdmin && (
+          <Button
+            variant="primary"
+            size="sm"
+            icon={<Plus size={16} />}
+            onClick={handleAddNew}
+          >
+            Añadir Categoría
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="divide-y divide-gray-100">
         {categories.length > 0 ? (
@@ -70,24 +91,26 @@ const CategoryList: React.FC = () => {
                 ></div>
                 <span className="text-sm font-medium text-gray-800">{category.name}</span>
               </div>
-              <div className="flex space-x-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleEdit(category)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <Edit size={16} />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDelete(category.id)}
-                  className="text-gray-500 hover:text-red-600"
-                >
-                  <Trash2 size={16} />
-                </Button>
-              </div>
+              {isAdmin && (
+                <div className="flex space-x-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleEdit(category)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <Edit size={16} />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(category.id)}
+                    className="text-gray-500 hover:text-red-600"
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </div>
+              )}
             </div>
           ))
         ) : (

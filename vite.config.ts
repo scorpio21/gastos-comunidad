@@ -7,8 +7,8 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-  // Usar './' para rutas relativas al directorio actual
-  base: './',
+  // Usar '/gastos/' como base URL
+  base: '/gastos/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',

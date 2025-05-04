@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
-import { Edit, Trash2, Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import Card, { CardContent, CardHeader } from '../ui/Card';
-import Button from '../ui/Button';
+import React from 'react';
+import { Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import Card, { CardHeader } from '../ui/Card';
 import Badge from '../ui/Badge';
 import { useExpense } from '../../context/ExpenseContext';
-import { useAuth } from '../../context/AuthContext';
 import { formatCurrency, formatDate } from '../../utils/helpers';
-import ExpenseForm from './ExpenseForm';
-import { Expense } from '../../types';
 
 interface ExpenseListProps {
   title?: string;
@@ -20,43 +16,17 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
   limit,
   showHeader = true 
 }) => {
-  const { expenses, categories, deleteExpense } = useExpense();
-  const { isAuthenticated } = useAuth();
-  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const { expenses, categories } = useExpense();
   
   // Get the filtered and sorted expenses
   const filteredExpenses = [...expenses]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, limit);
   
-  const handleEdit = (expense: Expense) => {
-    setEditingExpense(expense);
-  };
-  
-  const handleDelete = (id: string) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta transacción?')) {
-      deleteExpense(id);
-    }
-  };
-  
   const getCategoryColor = (categoryName: string) => {
     const category = categories.find(c => c.name === categoryName);
     return category?.color || '#64748B';
   };
-
-  if (editingExpense) {
-    return (
-      <Card>
-        <CardContent>
-          <ExpenseForm 
-            expense={editingExpense} 
-            onSubmit={() => setEditingExpense(null)}
-            onCancel={() => setEditingExpense(null)}
-          />
-        </CardContent>
-      </Card>
-    );
-  }
   
   return (
     <Card>
@@ -99,26 +69,6 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
                 <p className={`text-base font-medium mr-4 ${expense.isIncome ? 'text-green-600' : 'text-red-600'}`}>
                   {expense.isIncome ? '+' : '-'}{formatCurrency(Math.abs(expense.amount))}
                 </p>
-                {isAuthenticated && (
-                  <div className="flex space-x-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(expense)}
-                      className="text-gray-500 hover:text-gray-700"
-                    >
-                      <Edit size={16} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(expense.id)}
-                      className="text-gray-500 hover:text-red-600"
-                    >
-                      <Trash2 size={16} />
-                    </Button>
-                  </div>
-                )}
               </div>
             </div>
           ))

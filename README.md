@@ -229,82 +229,52 @@ gastos/
 │   │   ├── restore-categories.php # Restaurar categorías predeterminadas
 │   │   └── simple-clear-db.php  # Limpiar la base de datos
 │   ├── config/               # Configuración de la base de datos
+│   │   ├── config.php         # Configuración general
 │   │   └── database.php       # Configuración de conexión a la BD
 │   ├── models/               # Modelos de datos
 │   │   ├── Category.php       # Modelo para categorías
 │   │   └── Expense.php        # Modelo para gastos
 │   ├── categories.php        # API de categorías
-│   ├── config.php            # Configuración general
 │   ├── expenses.php          # API de gastos
-│   ├── index.php             # Punto de entrada de la API
-│   └── test.php              # Archivo de prueba para verificar la API
-├── assets/                   # Archivos compilados (CSS, JS)
-├── dist/                     # Archivos de distribución compilados
-├── imagen/                   # Imágenes y recursos gráficos
-├── src/                      # Código fuente de React
-│   ├── components/           # Componentes de React
-│   ├── context/              # Contextos de React (AuthContext, etc.)
-│   ├── hooks/                # Hooks personalizados
-│   ├── pages/                # Páginas de la aplicación
-│   ├── types/                # Definiciones de tipos TypeScript
-│   ├── utils/                # Utilidades y funciones auxiliares
-│   ├── App.tsx               # Componente principal de la aplicación
-│   └── main.tsx              # Punto de entrada de React
-├── GestionGastos.bat        # Script de inicio rápido
-├── GestionGastos.exe        # Ejecutable para iniciar la aplicación
-├── index.html              # Archivo HTML principal
-├── index.php               # Punto de entrada PHP para el servidor
-├── launcher.ps1            # Script PowerShell para iniciar la aplicación
-├── package.json            # Dependencias y scripts npm
-├── tsconfig.json           # Configuración de TypeScript
-└── vite.config.ts          # Configuración de Vite
-├── database/                 # Esquemas de base de datos
-│   └── schema.sql            # Esquema SQL de la base de datos
-├── dist/                     # Archivos de producción (generados)
-├── imagen/                   # Imágenes para documentación
-│   ├── panel_admin.png        # Captura del panel de administración
-│   └── panel_principal.png    # Captura del panel principal
-├── node_modules/             # Dependencias de Node.js
-├── public/                   # Archivos estáticos públicos
-├── src/                      # Código fuente de React
-│   ├── components/           # Componentes de React
-│   │   ├── dashboard/         # Componentes del dashboard
-│   │   ├── expenses/          # Componentes de gastos
-│   │   ├── layout/            # Componentes de layout
-│   │   └── ui/                # Componentes de UI reutilizables
+│   └── index.php             # Punto de entrada de la API
+├── src/                      # Frontend React
+│   ├── components/           # Componentes React
+│   │   ├── admin/             # Componentes de administración
+│   │   │   ├── AdminPanel.tsx    # Panel de administración
+│   │   │   ├── AdminTransactionList.tsx # Lista de transacciones (admin)
+│   │   │   └── LoginModal.tsx    # Modal de inicio de sesión
+│   │   ├── expenses/           # Componentes de gastos
+│   │   │   ├── ExpenseForm.tsx   # Formulario de gastos
+│   │   │   └── ExpenseList.tsx   # Lista de gastos
+│   │   ├── layout/             # Componentes de diseño
+│   │   │   └── Header.tsx        # Barra de navegación
+│   │   └── ui/                 # Componentes de UI reutilizables
+│   │       ├── Button.tsx        # Botón personalizado
+│   │       ├── Card.tsx          # Tarjeta
+│   │       └── Loading.tsx       # Indicador de carga
 │   ├── context/              # Contextos de React
-│   │   └── ExpenseContext.tsx # Contexto para gastos
-│   ├── data/                 # Datos estáticos
-│   ├── types/                # Definiciones de tipos TypeScript
-│   │   └── tauri.d.ts         # Definiciones de tipos para Tauri
+│   │   ├── AuthContext.tsx    # Contexto de autenticación
+│   │   └── ExpenseContext.tsx # Contexto de gastos
 │   ├── utils/                # Utilidades
 │   │   ├── api.ts             # Cliente API
-│   │   ├── excel.ts           # Utilidades para exportación a Excel
-│   │   ├── helpers.ts         # Funciones auxiliares
-│   │   └── tauri.ts           # Funciones para interactuar con Tauri
-│   ├── views/                # Vistas/Páginas
+│   │   └── helpers.ts         # Funciones auxiliares
+│   ├── views/                # Vistas principales
+│   │   ├── Dashboard.tsx      # Vista del panel
+│   │   ├── Transactions.tsx   # Vista de transacciones
+│   │   └── Charts.tsx         # Vista de gráficos
 │   ├── App.tsx               # Componente principal
-│   ├── index.css             # Estilos globales
 │   ├── main.tsx              # Punto de entrada
-│   └── vite-env.d.ts         # Definiciones de tipos para Vite
-├── src-tauri/                # Configuración y código de Tauri
-│   ├── Cargo.toml            # Configuración de dependencias Rust
-│   ├── icons/                # Iconos para la aplicación de escritorio
-│   ├── src/                  # Código fuente Rust
-│   │   └── main.rs           # Punto de entrada Rust con comandos
-│   └── tauri.conf.json      # Configuración de Tauri
-├── .gitignore                # Archivos ignorados por Git
-├── GestionGastos.bat         # Archivo batch para iniciar la aplicación
-├── index.html                # Plantilla HTML principal
-├── launcher.ps1              # Script PowerShell para verificar servicios
-├── package.json              # Configuración de dependencias
-├── postcss.config.js          # Configuración de PostCSS
-├── README.md                 # Documentación del proyecto
-├── tailwind.config.js         # Configuración de TailwindCSS
-├── tsconfig.app.json         # Configuración principal de TypeScript
-├── tsconfig.json             # Configuración de TypeScript
-├── tsconfig.node.json         # Configuración de TypeScript para Node
-└── vite.config.ts             # Configuración de Vite
+│   └── vite-env.d.ts         # Tipos de Vite
+├── dist/                     # Archivos compilados
+├── public/                   # Archivos estáticos
+├── .env                      # Variables de entorno
+├── index.html               # HTML principal
+├── index.php                # Enrutador PHP
+├── package.json             # Dependencias npm
+├── tsconfig.json           # Configuración TypeScript
+├── vite.config.ts          # Configuración Vite
+├── GestionGastos.exe       # Ejecutable de la aplicación
+└── launcher.ps1            # Script de inicio
 ```
 
 ## 💯 Funcionalidades Principales

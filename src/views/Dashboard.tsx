@@ -1,7 +1,7 @@
 import React from 'react';
 import FinancialSummary from '../components/dashboard/FinancialSummary';
 import CategorySummary from '../components/dashboard/CategorySummary';
-import ExpenseList from '../components/expenses/ExpenseList';
+import PublicExpenseList from '../components/expenses/PublicExpenseList';
 
 const Dashboard: React.FC = () => {
   return (
@@ -15,7 +15,7 @@ const Dashboard: React.FC = () => {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <ExpenseList limit={5} />
+          <PublicExpenseList limit={5} />
         </div>
         <div>
           <CategorySummary />
