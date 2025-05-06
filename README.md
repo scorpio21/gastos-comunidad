@@ -23,7 +23,7 @@
 
 
 ### Dashboard con Deudas Personales
-<img src="./imagen/dashboard_deudas.png" alt="Dashboard con Deudas Personales" width="600"/>
+<img src="./imagen/dashboard_deudas.png" alt="Dashboard con Deudas Personales" width="300"/>
 
 </div>
 
