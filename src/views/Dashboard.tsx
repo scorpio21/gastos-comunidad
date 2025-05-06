@@ -1,6 +1,7 @@
 import React from 'react';
 import FinancialSummary from '../components/dashboard/FinancialSummary';
 import CategorySummary from '../components/dashboard/CategorySummary';
+import PersonalDebtBars from '../components/dashboard/PersonalDebtBars';
 import PublicExpenseList from '../components/expenses/PublicExpenseList';
 
 const Dashboard: React.FC = () => {
@@ -19,6 +20,7 @@ const Dashboard: React.FC = () => {
         </div>
         <div>
           <CategorySummary />
+          <PersonalDebtBars />
         </div>
       </div>
     </div>

@@ -8,6 +8,7 @@ import Categories from './views/Categories';
 import Charts from './views/Charts';
 import AdminPanel from './components/admin/AdminPanel';
 import AdminTransactions from './views/AdminTransactions';
+import PersonalDebts from './views/PersonalDebts';
 import ExpenseForm from './components/expenses/ExpenseForm';
 import Card, { CardContent } from './components/ui/Card';
 import Loading from './components/ui/Loading';
@@ -41,6 +42,8 @@ const AppContent = () => {
         return <AdminPanel />;
       case 'admin-transactions':
         return <AdminTransactions />;
+      case 'personal-debts':
+        return <PersonalDebts />;
       default:
         return <Dashboard />;
     }

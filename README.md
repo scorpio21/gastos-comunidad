@@ -22,6 +22,9 @@
 
 
 
+### Dashboard con Deudas Personales
+<img src="./imagen/dashboard_deudas.png" alt="Dashboard con Deudas Personales" width="600"/>
+
 </div>
 
 ## 💻 Panel de Administración
@@ -36,7 +39,9 @@ El Panel de Administración proporciona herramientas potentes para gestionar la 
 
 - **💾 Optimizar Base de Datos**: Ejecuta comandos de optimización en las tablas de la base de datos para mejorar el rendimiento general de la aplicación.
 
-- **🗑️ Limpiar Base de Datos**: Elimina todos los registros de transacciones mientras preserva las tablas de usuarios y categorías. Esta función es útil para reiniciar la aplicación manteniendo la configuración básica.
+- **🗑️ Limpiar Base de Datos**: Elimina todos los registros de transacciones mientras preserva las tablas de usuarios, categorías **y deudas personales**. Esta función es útil para reiniciar la aplicación manteniendo la configuración básica y las deudas personales.
+
+  > ⚠️ **Advertencia:** La limpieza de la base de datos NO elimina las deudas personales almacenadas en la tabla `personal_debts`. Si deseas borrar también las deudas personales, deberás hacerlo manualmente desde la sección de deudas o mediante una consulta SQL específica.
 
 ### Seguridad
 
@@ -48,6 +53,9 @@ El acceso al Panel de Administración está protegido por autenticación, asegur
 - 📁 **Categorización**: Organiza los gastos en diferentes categorías (Gastos, Extras, Deudas)
 - 📈 **Visualización de Datos**: Gráficos interactivos para visualizar la distribución de gastos
 - 📆 **Exportación a Excel**: Exporta los datos a Excel con formato mejorado (deudas en rojo)
+- 👥 **Gestión de Deudas Personales**: Seguimiento de deudas personales con visualización en el dashboard
+- 🔐 **Control de Acceso**: Interfaz diferenciada para administradores y usuarios normales
+- 🚀 **Ejecutable Integrado**: Lanzador con icono personalizado para fácil ejecución
 
 ## 💻 Tecnologías Utilizadas
 
@@ -112,13 +120,47 @@ define('DB_PASS', '');
 
 ## 🚀 Uso
 
+### ⚡️ Build y despliegue correcto del frontend (React + Vite)
+
+Para que los cambios en el frontend se reflejen correctamente en producción, sigue estos pasos:
+
+1. **Restaurar el `index.html` para desarrollo**
+   - Antes de hacer el build, asegúrate de que tu `index.html` en la raíz tenga solo la referencia al punto de entrada de React:
+   ```html
+   <script type="module" src="/src/main.tsx"></script>
+   ```
+   - No debe tener referencias directas a archivos de `assets` con hash.
+
+2. **Ejecutar el build**
+   - En la raíz del proyecto, ejecuta:
+   ```bash
+   npm run build
+   ```
+   - Esto generará los archivos finales en la carpeta `dist`.
+
+3. **Copiar los archivos generados a la raíz**
+   - Copia el `dist/index.html` y la carpeta `dist/assets` a la raíz del proyecto (`d:\xampp\htdocs\gastos`), sobrescribiendo los archivos antiguos.
+   - La estructura final debe ser:
+     ```
+     gastos/
+     ├── index.html      # generado por el build
+     ├── assets/         # carpeta generada por el build
+     ├── api/
+     └── ...otros archivos
+     ```
+
+4. **Refresca la página**
+   - Ve a `http://localhost/gastos/` y verás la versión actualizada de la aplicación.
+
+---
+
 ### Usando el Lanzador (Recomendado)
 
-La aplicación incluye un lanzador que facilita su ejecución en diferentes modos:
+La aplicación incluye un lanzador ejecutable que facilita su ejecución en diferentes modos:
 
-1. Ejecuta el archivo `GestionGastos.bat` haciendo doble clic en él.
+1. Ejecuta el archivo `GestionGastos.exe` haciendo doble clic en él.
 
-2. Se abrirá una interfaz gráfica que muestra el estado de los servicios de XAMPP.
+2. Se abrirá una interfaz gráfica con icono personalizado que muestra el estado de los servicios de XAMPP.
 
 3. Elige uno de los modos de ejecución:
 
@@ -159,7 +201,7 @@ npm run build
 
 ## 🔄 Cambiar la carpeta o ruta del proyecto
 
-Esta aplicación está diseñada para funcionar correctamente incluso si cambias la ubicación del proyecto. Sin embargo, hay algunos pasos importantes que debes seguir:
+Esta aplicación está diseñada para funcionar correctamente independientemente de la carpeta donde se coloque. El ejecutable `GestionGastos.exe` detecta automáticamente la ubicación del proyecto y configura las rutas adecuadamente. Sin embargo, hay algunos aspectos importantes a considerar:
 
 ### 1. Mover los archivos del proyecto
 
@@ -167,39 +209,40 @@ Esta aplicación está diseñada para funcionar correctamente incluso si cambias
 
 ### 2. Configurar el acceso a la API
 
-Para que la aplicación pueda acceder a la API correctamente, necesitas crear una carpeta `api` en la raíz del servidor web que redirija a la API de tu proyecto:
+La aplicación utiliza un sistema de redirección para acceder a la API desde cualquier ubicación:
 
-1. Crea una carpeta llamada `api` en la raíz del servidor web (`D:\xampp\htdocs\api`).
+1. **Carpeta de redirección en la raíz del servidor web**
+   - Una carpeta llamada `api` en la raíz del servidor web (por ejemplo, `D:\xampp\htdocs\api`)
+   - Contiene un archivo `index.php` que redirige todas las solicitudes a la carpeta real de la API
+   - Este sistema permite que la aplicación funcione sin modificar su código interno
 
-2. Crea un archivo `index.php` dentro de esta carpeta con el siguiente contenido:
+   ```php
+   <?php
+   // Redirige todas las solicitudes a la carpeta gastos/api
+   $request_uri = $_SERVER['REQUEST_URI'];
+   $path = parse_url($request_uri, PHP_URL_PATH);
+   
+   // Eliminar '/api' del principio del path
+   $new_path = preg_replace('/^\/api/', '/gastos/api', $path);
+   
+   // Construir la nueva URL
+   $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+   $host = $_SERVER['HTTP_HOST'];
+   $new_url = "$protocol://$host$new_path";
+   
+   // Redirigir a la nueva URL
+   header("Location: $new_url", true, 307);
+   exit;
+   ?>
+   ```
 
-```php
-<?php
-// Este archivo redirige todas las solicitudes de /api a /[tu-carpeta]/api
-
-// Obtener la ruta solicitada
-$request_uri = $_SERVER['REQUEST_URI'];
-
-// Quitar '/api' del inicio de la ruta
-$new_path = preg_replace('/^\/api/', '/[nombre-de-tu-carpeta]/api', $request_uri);
-
-// Redirigir a la nueva ruta
-header("Location: $new_path");
-exit;
-?>
-```
-
-> **Importante**: Reemplaza `[nombre-de-tu-carpeta]` con el nombre real de la carpeta donde has colocado el proyecto.
+2. **Configuración automática**
+   - El ejecutable `GestionGastos.exe` detecta automáticamente la ubicación del proyecto
+   - Abre la aplicación con las rutas correctas sin necesidad de configuración manual
 
 ### 3. Ejecutar la aplicación
 
 Una vez configurado, simplemente ejecuta el archivo `GestionGastos.exe` o `GestionGastos.bat` desde la nueva ubicación. El ejecutable detectará automáticamente la carpeta donde está instalado y construirá las URLs correctamente.
-     ```typescript
-     export default defineConfig({
-       // ...
-       base: '/ruta/a/tu/subcarpeta/',
-       // ...
-     });
      ```
 
 4. Configura el servidor web:
@@ -211,10 +254,6 @@ Una vez configurado, simplemente ejecuta el archivo `GestionGastos.exe` o `Gesti
        RewriteBase /
        RewriteRule ^index\.html$ - [L]
        RewriteCond %{REQUEST_FILENAME} !-f
-       RewriteCond %{REQUEST_FILENAME} !-d
-       RewriteRule . /index.html [L]
-     </IfModule>
-     ```
 
 ## 📚 Estructura del Proyecto
 
@@ -273,8 +312,9 @@ gastos/
 ├── package.json             # Dependencias npm
 ├── tsconfig.json           # Configuración TypeScript
 ├── vite.config.ts          # Configuración Vite
-├── GestionGastos.exe       # Ejecutable de la aplicación
-└── launcher.ps1            # Script de inicio
+├── GestionGastos.exe       # Ejecutable de la aplicación con icono personalizado
+├── launcher.ps1            # Script de inicio PowerShell
+└── dashboard-with-debts.html # Dashboard alternativo con visualización de deudas personales
 ```
 
 ## 💯 Funcionalidades Principales

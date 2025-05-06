@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Trash2, RefreshCw, Tag, Receipt } from 'lucide-react';
 import Button from '../ui/Button';
 import AdminTransactionList from './AdminTransactionList';
+import PersonalDebtAdminList from './PersonalDebtAdminList';
 
 // Interfaz para las opciones de administración
 interface AdminOption {
@@ -199,8 +200,44 @@ const AdminPanel: React.FC = () => {
     }
   };
 
+  // Función para borrar todas las deudas personales
+  const clearPersonalDebts = async () => {
+    setIsLoading('clearPersonalDebts');
+    setResult(null);
+    try {
+      const response = await fetch('/api/admin/clear-personal-debts.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setResult({ success: true, message: data.message });
+      } else {
+        setResult({ success: false, message: data.message });
+      }
+    } catch (error) {
+      setResult({
+        success: false,
+        message: `Error de conexión: ${error instanceof Error ? error.message : 'Error desconocido'}`
+      });
+    } finally {
+      setIsLoading(null);
+      setShowConfirmation(null);
+    }
+  };
+
   // Opciones de administración
   const adminOptions: AdminOption[] = [
+    {
+      id: 'clearPersonalDebts',
+      title: 'Eliminar Todas las Deudas Personales',
+      description: 'Borra permanentemente todas las deudas personales del sistema. Esta acción no se puede deshacer.',
+      icon: <Trash2 className="h-6 w-6 text-purple-500" />,
+      action: clearPersonalDebts,
+      dangerous: true
+    },
     {
       id: 'restoreCategories',
       title: 'Restaurar Categorías',
@@ -344,6 +381,8 @@ const AdminPanel: React.FC = () => {
           </div>
         ))}
       </div>
+      {/* Gestión individual de deudas personales */}
+      <PersonalDebtAdminList />
     </div>
   );
 };

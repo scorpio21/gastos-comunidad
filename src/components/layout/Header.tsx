@@ -26,6 +26,7 @@ const Header: React.FC<HeaderProps> = ({ openAddExpense, setCurrentView, current
     { label: 'Transacciones', value: 'transactions' },
     { label: 'Categorías', value: 'categories' },
     { label: 'Gráficos', value: 'charts' },
+    { label: 'Deudas Personales', value: 'personal-debts' },
   ];
   
   // Item de administrador
@@ -73,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({ openAddExpense, setCurrentView, current
             <nav className="hidden md:ml-8 md:flex items-center">
               {/* Menú principal */}
               <div className="flex space-x-4">
-                {navItems.map((item) => (
+                {navItems.map((item) => 
                   <button
                     key={item.value}
                     className={`px-3 py-2 text-sm font-medium rounded-md min-w-[100px] ${
@@ -85,7 +86,7 @@ const Header: React.FC<HeaderProps> = ({ openAddExpense, setCurrentView, current
                   >
                     {item.label}
                   </button>
-                ))}
+                )}
               </div>
               
               {/* Separador vertical cuando hay botones de admin */}
@@ -115,14 +116,16 @@ const Header: React.FC<HeaderProps> = ({ openAddExpense, setCurrentView, current
             </nav>
           </div>
           <div className="hidden md:flex items-center space-x-2">
-            <Button
-              variant="primary"
-              size="md"
-              icon={<Plus size={16} />}
-              onClick={openAddExpense}
-            >
-              Add Transaction
-            </Button>
+            {currentView !== 'personal-debts' && (
+              <Button
+                variant="primary"
+                size="md"
+                icon={<Plus size={16} />}
+                onClick={openAddExpense}
+              >
+                Add Transaction
+              </Button>
+            )}
             
             {/* Botón de inicio/cierre de sesión */}
             {isAuthenticated ? (
@@ -170,19 +173,29 @@ const Header: React.FC<HeaderProps> = ({ openAddExpense, setCurrentView, current
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="pt-2 pb-3 space-y-1 bg-white shadow-lg">
-            {navItems.map((item) => (
-              <button
-                key={item.value}
-                className={`block px-4 py-2 text-base font-medium w-full text-left ${
-                  currentView === item.value
-                    ? 'text-teal-600 bg-teal-50'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                }`}
-                onClick={() => handleNavClick(item.value)}
-              >
-                {item.label}
-              </button>
-            ))}
+            {navItems.map((item) => 
+              item.value === 'personal-debts' ? (
+                <a
+                  key={item.value}
+                  href="/gastos/personal-debts.html"
+                  className={`block px-4 py-2 text-base font-medium w-full text-left text-gray-500 hover:text-gray-700 hover:bg-gray-50`}
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <button
+                  key={item.value}
+                  className={`block px-4 py-2 text-base font-medium w-full text-left ${
+                    currentView === item.value
+                      ? 'text-teal-600 bg-teal-50'
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  }`}
+                  onClick={() => handleNavClick(item.value)}
+                >
+                  {item.label}
+                </button>
+              )
+            )}
             
             {/* Opciones de Administrador en el menú móvil - solo si está autenticado */}
             {isAuthenticated && adminItems.map(item => (

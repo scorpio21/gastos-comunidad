@@ -14,7 +14,18 @@ $scriptPath = (Get-Location).Path
 $currentFolder = Split-Path -Leaf $scriptPath
 $xamppUrl = "http://localhost/$currentFolder/"
 $devUrl = $null # Se detectará automáticamente
-$xamppControlPath = "D:\xampp\xampp-control.exe"
+# Autodetección de la ruta de XAMPP
+$possibleXamppPaths = @(
+    "D:\xampp\xampp-control.exe",
+    "C:\xampp\xampp-control.exe",
+    "$env:ProgramFiles\xampp\xampp-control.exe",
+    "$env:ProgramFiles(x86)\xampp\xampp-control.exe"
+)
+$xamppControlPath = $possibleXamppPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+if (-not $xamppControlPath) {
+    Write-Warning "No se pudo encontrar XAMPP automáticamente. Algunas funciones pueden no estar disponibles."
+    $xamppControlPath = $possibleXamppPaths[0] # Valor por defecto para el botón, aunque no exista
+}
 $apacheServiceName = "httpd"
 $mysqlServiceName = "mysqld"
 
@@ -198,6 +209,50 @@ function Show-SplashScreen {
     })
     $form.Controls.Add($devModeButton)
 
+    # Botón para Build Frontend
+    $buildButton = New-Object System.Windows.Forms.Button
+    $buildButton.Text = "Build Frontend"
+    $buildButton.Location = New-Object System.Drawing.Point(20, 190)
+    $buildButton.Size = New-Object System.Drawing.Size(120, 30)
+    $buildButton.Add_Click({
+        $buildButton.Enabled = $false
+        $statusLabel.Text = "Ejecutando build de Vite..."
+        try {
+            $projectPath = (Get-Location).Path
+            $npmPaths = @(
+                "C:\Program Files\nodejs\npm.cmd",
+                "C:\Program Files (x86)\nodejs\npm.cmd",
+                "$env:APPDATA\npm\npm.cmd"
+            )
+            $npmPath = $null
+            foreach ($path in $npmPaths) {
+                if (Test-Path $path) {
+                    $npmPath = $path
+                    break
+                }
+            }
+            if (-not $npmPath) {
+                $statusLabel.Text = "No se pudo encontrar npm. Instala Node.js."
+                $buildButton.Enabled = $true
+                return
+            }
+            $buildProc = Start-Process -FilePath $npmPath -ArgumentList 'run','build' -WorkingDirectory $projectPath -NoNewWindow -Wait -PassThru
+            if ($buildProc.ExitCode -eq 0) {
+                # Copiar archivos
+                Copy-Item -Path "$projectPath\dist\index.html" -Destination "$projectPath\index.html" -Force
+                Copy-Item -Path "$projectPath\dist\assets" -Destination "$projectPath\assets" -Recurse -Force
+                $statusLabel.Text = "Build y copia completados."
+            } else {
+                $statusLabel.Text = "Error en el build. Revisa la consola o build-output.log."
+            }
+        } catch {
+            $statusLabel.Text = "Error: $_"
+        } finally {
+            $buildButton.Enabled = $true
+        }
+    })
+    $form.Controls.Add($buildButton)
+
     # Botón para salir
     $exitButton = New-Object System.Windows.Forms.Button
     $exitButton.Text = "Salir"
@@ -212,7 +267,7 @@ function Show-SplashScreen {
     $statusLabel = New-Object System.Windows.Forms.Label
     $statusLabel.Text = "Verificando servicios..."
     $statusLabel.AutoSize = $true
-    $statusLabel.Location = New-Object System.Drawing.Point(20, 200)
+    $statusLabel.Location = New-Object System.Drawing.Point(20, 230)
     $statusLabel.Size = New-Object System.Drawing.Size(360, 40)
     $form.Controls.Add($statusLabel)
 
@@ -248,15 +303,14 @@ function Show-SplashScreen {
     $timer.Stop()
 }
 
-# Verificar si XAMPP está instalado
+# Mostrar advertencia si XAMPP no está disponible, pero permitir continuar
 if (-not (Test-Path $xamppControlPath)) {
     [System.Windows.Forms.MessageBox]::Show(
-        "No se pudo encontrar XAMPP en la ruta: $xamppControlPath`nPor favor, asegúrate de que XAMPP esté instalado correctamente.",
-        "Error",
+        "No se pudo encontrar XAMPP en la ruta: $xamppControlPath`nPuedes continuar usando la aplicación, pero algunas funciones como iniciar XAMPP no estarán disponibles.",
+        "Advertencia",
         [System.Windows.Forms.MessageBoxButtons]::OK,
-        [System.Windows.Forms.MessageBoxIcon]::Error
+        [System.Windows.Forms.MessageBoxIcon]::Warning
     )
-    exit
 }
 
 # Mostrar la interfaz gráfica

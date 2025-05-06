@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deudas Personales - GestiónGastos</title>
+    <!-- Tailwind CSS CDN para estilos similares a la aplicación React -->
+    <link rel="stylesheet" href="dist/assets/index-C-Gr0rNL.css">
+    <!-- Iconos de Lucide (similar a los usados en la aplicación React) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Estilos adicionales para mantener la consistencia con la aplicación React */
+        .btn-primary {
+            background-color: #0ea5e9;
+            color: white;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0284c7;
+        }
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            transition: background-color 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header similar al de la aplicación React -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i data-lucide="wallet" class="h-8 w-8 text-teal-600"></i>
+                        <span class="ml-2 text-xl font-semibold text-gray-900">GestiónGastos</span>
+                    </div>
+                    <nav class="hidden md:ml-8 md:flex items-center">
+                        <div class="flex space-x-4">
+                            <a href="/gastos/" class="px-3 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out">Panel</a>
+                            <a href="/gastos/" class="px-3 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out">Transacciones</a>
+                            <a href="/gastos/" class="px-3 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out">Categorías</a>
+                            <a href="/gastos/" class="px-3 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out">Gráficos</a>
+                            <a href="/gastos/personal-debts.html" class="px-3 py-2 text-sm font-medium rounded-md text-teal-600 bg-teal-50 transition-colors duration-150 ease-in-out">Deudas Personales</a>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Tarjeta de deudas personales -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="flex justify-between items-center p-6 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-800">Deudas Personales</h2>
+                <button id="btnNewDebt" class="btn-primary flex items-center px-4 py-2 rounded-md text-sm font-medium">
+                    <i data-lucide="plus" class="h-4 w-4 mr-2"></i>
+                    Nueva Deuda
+                </button>
+            </div>
+            <div class="p-6">
+                <!-- Mensaje de error (inicialmente oculto) -->
+                <div id="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 hidden">
+                    <strong class="font-bold">Error:</strong>
+                    <span id="errorText" class="block sm:inline"></span>
+                </div>
+
+                <!-- Indicador de carga (inicialmente visible) -->
+                <div id="loadingIndicator" class="flex justify-center items-center py-10">
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+                    <span class="ml-3">Cargando deudas personales...</span>
+                </div>
+
+                <!-- Lista de deudas (inicialmente oculta) -->
+                <div id="debtsList" class="divide-y divide-gray-100 hidden"></div>
+
+                <!-- Mensaje de no hay deudas (inicialmente oculto) -->
+                <div id="noDebtsMessage" class="py-8 text-center text-gray-500 hidden">
+                    <p>No hay deudas personales registradas.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Formulario modal (inicialmente oculto) -->
+    <div id="debtFormModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md relative">
+            <button id="btnCloseModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <i data-lucide="x" class="h-6 w-6"></i>
+            </button>
+            
+            <h2 id="modalTitle" class="text-xl font-semibold mb-4">Nueva Deuda Personal</h2>
+
+            <form id="debtForm" class="space-y-4">
+                <input type="hidden" id="debtId" value="">
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nombre</label>
+                    <input
+                        type="text"
+                        id="debtName"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Concepto</label>
+                    <input
+                        type="text"
+                        id="debtConcept"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Cantidad</label>
+                    <input
+                        type="number"
+                        id="debtAmount"
+                        step="0.01"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Fecha</label>
+                    <input
+                        type="date"
+                        id="debtDate"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                        required
+                    />
+                </div>
+
+                <div id="statusContainer" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700">Estado</label>
+                    <select
+                        id="debtStatus"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+                    >
+                        <option value="pending">Pendiente</option>
+                        <option value="paid">Pagado</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button
+                        type="button"
+                        id="btnCancelForm"
+                        class="btn-secondary px-4 py-2 rounded-md text-sm font-medium"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        type="submit"
+                        id="btnSubmitForm"
+                        class="btn-primary px-4 py-2 rounded-md text-sm font-medium"
+                    >
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-gray-500">
+                GestiónGastos © <span id="currentYear"></span> - Gestión de Gastos Simplificada - Por Scorpio
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Inicializar los iconos de Lucide
+        lucide.createIcons();
+
+        // Establecer el año actual en el footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Variables globales
+        let debts = [];
+        let editingDebt = null;
+
+        // Elementos del DOM
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const debtsList = document.getElementById('debtsList');
+        const noDebtsMessage = document.getElementById('noDebtsMessage');
+        const debtFormModal = document.getElementById('debtFormModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const debtForm = document.getElementById('debtForm');
+        const debtId = document.getElementById('debtId');
+        const debtName = document.getElementById('debtName');
+        const debtConcept = document.getElementById('debtConcept');
+        const debtAmount = document.getElementById('debtAmount');
+        const debtDate = document.getElementById('debtDate');
+        const debtStatus = document.getElementById('debtStatus');
+        const statusContainer = document.getElementById('statusContainer');
+        const btnNewDebt = document.getElementById('btnNewDebt');
+        const btnCloseModal = document.getElementById('btnCloseModal');
+        const btnCancelForm = document.getElementById('btnCancelForm');
+        const btnSubmitForm = document.getElementById('btnSubmitForm');
+
+        // Función para formatear moneda
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-ES', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(amount);
+        }
+
+        // Función para formatear fechas
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES');
+        }
+
+        // Función para mostrar un mensaje de error
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        // Función para ocultar el mensaje de error
+        function hideError() {
+            errorMessage.classList.add('hidden');
+        }
+
+        // Función para mostrar el indicador de carga
+        function showLoading() {
+            loadingIndicator.classList.remove('hidden');
+            debtsList.classList.add('hidden');
+            noDebtsMessage.classList.add('hidden');
+        }
+
+        // Función para ocultar el indicador de carga
+        function hideLoading() {
+            loadingIndicator.classList.add('hidden');
+        }
+
+        // Función para cargar las deudas desde la API
+        async function fetchDebts() {
+            try {
+                showLoading();
+                hideError();
+                
+                const response = await fetch('/gastos/api/personal-debts.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    debts = Array.isArray(data.data) ? data.data : [];
+                    renderDebts();
+                } else {
+                    showError(data.message || 'Error al cargar las deudas personales');
+                    debts = [];
+                    renderDebts();
+                }
+            } catch (err) {
+                console.error('Error fetching debts:', err);
+                showError('Error al conectar con el servidor');
+                debts = [];
+                renderDebts();
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Función para renderizar las deudas en la lista
+        function renderDebts() {
+            if (debts.length === 0) {
+                debtsList.classList.add('hidden');
+                noDebtsMessage.classList.remove('hidden');
+                return;
+            }
+
+            debtsList.classList.remove('hidden');
+            noDebtsMessage.classList.add('hidden');
+            
+            // Limpiar la lista
+            debtsList.innerHTML = '';
+            
+            // Renderizar cada deuda
+            debts.forEach(debt => {
+                const debtElement = document.createElement('div');
+                debtElement.className = 'flex items-center justify-between py-4 hover:bg-gray-50 transition-colors duration-150';
+                
+                debtElement.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 mr-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center ${debt.status === 'paid' ? 'bg-green-100' : 'bg-yellow-100'}">
+                                ${debt.status === 'paid' ? 
+                                    '<i data-lucide="check-circle" class="text-green-600"></i>' : 
+                                    '<i data-lucide="clock" class="text-yellow-600"></i>'}
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">${debt.name}</p>
+                            <div class="flex items-center mt-1">
+                                <span class="text-xs text-gray-500">${debt.concept}</span>
+                                <div class="flex items-center ml-2 text-xs text-gray-500">
+                                    <i data-lucide="calendar" class="h-3 w-3 mr-1"></i>
+                                    ${formatDate(debt.date)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <p class="text-base font-medium text-gray-900">
+                            ${formatCurrency(debt.amount)}
+                        </p>
+                        <div class="flex space-x-2">
+                            <button class="text-blue-600 hover:text-blue-900 edit-debt" data-id="${debt.id}">
+                                <i data-lucide="edit-2" class="h-5 w-5"></i>
+                            </button>
+                            ${debt.status === 'pending' ? 
+                                `<button class="text-green-600 hover:text-green-900 mark-paid" data-id="${debt.id}">
+                                    <i data-lucide="check-circle" class="h-5 w-5"></i>
+                                </button>` : ''}
+                            <button class="text-red-600 hover:text-red-900 delete-debt" data-id="${debt.id}">
+                                <i data-lucide="trash-2" class="h-5 w-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                debtsList.appendChild(debtElement);
+            });
+            
+            // Reinicializar los iconos después de agregar contenido dinámico
+            lucide.createIcons();
+            
+            // Agregar event listeners a los botones
+            document.querySelectorAll('.edit-debt').forEach(button => {
+                button.addEventListener('click', () => editDebt(button.dataset.id));
+            });
+            
+            document.querySelectorAll('.mark-paid').forEach(button => {
+                button.addEventListener('click', () => markAsPaid(button.dataset.id));
+            });
+            
+            document.querySelectorAll('.delete-debt').forEach(button => {
+                button.addEventListener('click', () => deleteDebt(button.dataset.id));
+            });
+        }
+
+        // Función para abrir el modal de nueva deuda
+        function openNewDebtModal() {
+            editingDebt = null;
+            debtId.value = '';
+            debtForm.reset();
+            
+            // Establecer la fecha actual
+            const today = new Date().toISOString().split('T')[0];
+            debtDate.value = today;
+            
+            // Ocultar el selector de estado para nuevas deudas
+            statusContainer.classList.add('hidden');
+            
+            modalTitle.textContent = 'Nueva Deuda Personal';
+            btnSubmitForm.textContent = 'Guardar';
+            
+            debtFormModal.classList.remove('hidden');
+        }
+
+        // Función para abrir el modal de edición de deuda
+        function editDebt(id) {
+            const debt = debts.find(d => d.id === id);
+            if (!debt) return;
+            
+            editingDebt = debt;
+            debtId.value = debt.id;
+            debtName.value = debt.name;
+            debtConcept.value = debt.concept;
+            debtAmount.value = debt.amount;
+            debtDate.value = debt.date;
+            debtStatus.value = debt.status;
+            
+            // Mostrar el selector de estado para edición
+            statusContainer.classList.remove('hidden');
+            
+            modalTitle.textContent = 'Editar Deuda Personal';
+            btnSubmitForm.textContent = 'Actualizar';
+            
+            debtFormModal.classList.remove('hidden');
+        }
+
+        // Función para cerrar el modal
+        function closeModal() {
+            debtFormModal.classList.add('hidden');
+        }
+
+        // Función para guardar una deuda (crear o actualizar)
+        async function saveDebt(event) {
+            event.preventDefault();
+            
+            const debtData = {
+                name: debtName.value,
+                concept: debtConcept.value,
+                amount: parseFloat(debtAmount.value),
+                date: debtDate.value,
+                status: editingDebt ? debtStatus.value : 'pending'
+            };
+            
+            try {
+                showLoading();
+                
+                const method = editingDebt ? 'PUT' : 'POST';
+                const url = `/gastos/api/personal-debts.php${editingDebt ? `?id=${editingDebt.id}` : ''}`;
+                
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(debtData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    closeModal();
+                    await fetchDebts(); // Recargar las deudas después de guardar
+                } else {
+                    throw new Error(data.message || `Error al ${editingDebt ? 'actualizar' : 'crear'} la deuda`);
+                }
+            } catch (err) {
+                console.error('Error saving debt:', err);
+                alert(`Error al ${editingDebt ? 'actualizar' : 'crear'} la deuda: ${err.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Función para marcar una deuda como pagada
+        async function markAsPaid(id) {
+            try {
+                showLoading();
+                
+                const debt = debts.find(d => d.id === id);
+                if (!debt) throw new Error('Deuda no encontrada');
+                
+                const updatedDebt = { ...debt, status: 'paid' };
+                
+                const response = await fetch(`/gastos/api/personal-debts.php?id=${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedDebt)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    await fetchDebts(); // Recargar las deudas después de actualizar
+                } else {
+                    throw new Error(data.message || 'Error al marcar la deuda como pagada');
+                }
+            } catch (err) {
+                console.error('Error marking debt as paid:', err);
+                alert('Error al marcar la deuda como pagada: ' + err.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Función para eliminar una deuda
+        async function deleteDebt(id) {
+            if (!confirm('¿Estás seguro de que quieres eliminar esta deuda?')) return;
+            
+            try {
+                showLoading();
+                
+                const response = await fetch(`/gastos/api/personal-debts.php?id=${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    await fetchDebts(); // Recargar las deudas después de eliminar
+                } else {
+                    throw new Error(data.message || 'Error al eliminar la deuda');
+                }
+            } catch (err) {
+                console.error('Error deleting debt:', err);
+                alert('Error al eliminar la deuda: ' + err.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Event listeners
+        btnNewDebt.addEventListener('click', openNewDebtModal);
+        btnCloseModal.addEventListener('click', closeModal);
+        btnCancelForm.addEventListener('click', closeModal);
+        debtForm.addEventListener('submit', saveDebt);
+
+        // Cargar las deudas al cargar la página
+        document.addEventListener('DOMContentLoaded', fetchDebts);
+    </script>
+</body>
+</html>

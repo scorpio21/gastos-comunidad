@@ -4,6 +4,9 @@
 // Usar la ruta completa incluyendo la carpeta del proyecto
 const API_BASE_URL = '/gastos/api';
 
+// Asegurarnos de que la URL base sea correcta
+console.log('API_BASE_URL:', API_BASE_URL);
+
 // Asegurarnos de que todas las rutas usen la base correcta
 const getApiUrl = (endpoint: string) => `${API_BASE_URL}/${endpoint}`;
 

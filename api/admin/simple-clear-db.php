@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 require_once '../config.php';
 
 // Tablas a preservar
-$preserve_tables = ['admin_users', 'categories'];
+$preserve_tables = ['admin_users', 'categories', 'personal_debts'];
 
 // Inicializar respuesta
 $response = [
