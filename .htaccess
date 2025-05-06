@@ -1,5 +1,0 @@
-# Habilitar rewrite engine
-RewriteEngine On
-
-# Redirigir todas las peticiones a través de index.php
-FallbackResource /gastos/index.php
